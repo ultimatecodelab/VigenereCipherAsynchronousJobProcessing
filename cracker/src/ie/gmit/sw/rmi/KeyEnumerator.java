@@ -46,7 +46,7 @@ public class KeyEnumerator {
 					System.out.println("Word : " + temp + "Score: " + score);
 					System.out.println(result);
 				}*/
-				if(new String(key).length()==maxKeyLength){
+				if(new String(key).length()<=maxKeyLength){
 				
 					if(score > bestScore){
 						//System.out.println("CurrentScore " + score + "New " + bestScore);
@@ -61,7 +61,6 @@ public class KeyEnumerator {
 		System.out.println("Best key is : " + bestKey);
 		System.out.println("Best score is : " + bestScore);
 		System.out.println("The decrypted text is : \n " + yahoo);
-		//addSpace(yahoo);
 		return yahoo;
 	}
 	

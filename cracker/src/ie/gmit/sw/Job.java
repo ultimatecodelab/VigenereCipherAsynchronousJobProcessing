@@ -14,8 +14,7 @@ public class Job {
 		this.maxKeyLength = maxKeyLength;
 	}
 
-	public Job(String jobID, String cypherText,int keyLength)
-	{
+	public Job(String jobID, String cypherText,int keyLength){
 		setJob_id(jobID);
 		setCypherText(cypherText);
 		setMaxKeyLength(keyLength);

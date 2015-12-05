@@ -22,12 +22,10 @@ public class CrackerHandler extends HttpServlet {
 			Thread thread = new Thread(processor);
 			thread.start();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 	}
-	public String key = "Processing,please wait..... ";
+	public String key = "Processing, Please wait.......";
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		//req.setAttribute("org.apache.catalina.ASYNC_SUPPORTED", true);
 		//final AsyncContext ac = req.startAsync(req,resp);
@@ -43,6 +41,10 @@ public class CrackerHandler extends HttpServlet {
 		
 		String cypherText = req.getParameter("frmCypherText");
 		String taskNumber = req.getParameter("frmStatus");
+		String doEncryption = req.getParameter("command");
+		System.out.println("Value is : " + doEncryption);
+		//if value = 0 , take the key and do encryption
+		//else if value = 1, do the decryption
 
 
 		out.print("<html><head><title>Distributed Systems Assignment</title>");		
@@ -53,17 +55,18 @@ public class CrackerHandler extends HttpServlet {
 		
 		if (taskNumber == null){
 			taskNumber = new String("T" + jobNumber);
-			jobNumber++;
+			
 			//Add job to in-queue
 			//Step 1
 			Job job = new Job(taskNumber, cypherText, maxKeyLength); //job
 			//System.out.println("TaskNumber: " + taskNumber + " CypherText: " + cypherText + " Len: " +maxKeyLength);
 			
 			InQueue.inqueueInstance().add(job);
+			jobNumber++;
 			//System.out.println("Queue size is: " + InQueue.inqueueInstance().inQueue().size());
 			
 			//DecipheredMessage deciphered = DecipheredMessage();
-			
+			key = "Processing......";
 			
 		}else{
 			//Check out-queue for finished job
@@ -71,12 +74,11 @@ public class CrackerHandler extends HttpServlet {
 			
 			if(OutQueue.OutQueueInstance().outQueueMap().containsKey(taskNumber)){
 				 key = OutQueue.OutQueueInstance().outQueueMap().get(taskNumber).toString();
-				System.out.println("Calling from handler: " + key);
+				///System.out.println("Calling from handler: " + key);
 				
 			}
-			else
-			{
-				System.out.println("Nope");
+			else {
+				key = "Processing......";
 			}
 			
 		}
@@ -89,7 +91,7 @@ public class CrackerHandler extends HttpServlet {
 		out.print("<P>Maximum Key Length: " + maxKeyLength);		
 		out.print("<P>CypherText: " + cypherText);
 		
-		out.print("<P>Deciphered Text: " + key);
+		out.print("<P><b>Deciphered Text: " + key );
 		/*out.print("<P>This servlet should only be responsible for handling client request and returning responses. Everything else should be handled by different objects.");
 		out.print("<P>Note that any variables declared inside this doGet() method are thread safe. Anything defined at a class level is shared between HTTP requests.");				
 
@@ -136,11 +138,6 @@ public class CrackerHandler extends HttpServlet {
 		
 		//
 		
-	}
-
-	private DecipheredMessage DecipheredMessage() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

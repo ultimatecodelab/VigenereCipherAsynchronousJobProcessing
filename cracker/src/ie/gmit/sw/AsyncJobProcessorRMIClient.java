@@ -30,37 +30,39 @@ public class AsyncJobProcessorRMIClient implements Runnable {
 			 catch (InterruptedException e) {
 			 }	//catch
 			
-			if(!InQueue.inQueue().isEmpty()){
-				Job tempJob = InQueue.inQueue().pollLast();
-				String jobId = tempJob.getJob_id();
-				
-				String cypherText = new String( tempJob.getCypherText());
-				Integer maxLength = new Integer(tempJob.getMaxKeyLength());
-				
-				System.out.println("Queue is not Empty");
-				DecipheredMessage decipheredMsg = new DecipheredMessage();
-				System.out.println("POOLING THE QUEUE OUT");
-				
-				
-				String msg = null;
-				try {
-					msg = vigenereService.decrypt(cypherText,maxLength);
-					decipheredMsg.setDecipherMessage(msg);
-					if(decipheredMsg.getDecipherMessage()!=null){
-						System.out.println("Adding to map");
-						OutQueue.OutQueueInstance().outQueueMap().put(jobId, decipheredMsg);
-					}
-					else{
-						System.out.println("Not yet processed");
-					}
-				} catch (RemoteException e) {
-					
-				}
-				
-				
-		}
+			checkQueue();
 			
 		}//while
+	}
+	private void checkQueue() {
+		if(!InQueue.inQueue().isEmpty()){
+			Job tempJob = InQueue.inQueue().poll(); //
+			String jobId = tempJob.getJob_id();
+			
+			String cypherText = new String( tempJob.getCypherText());
+			Integer maxLength = new Integer(tempJob.getMaxKeyLength());
+			
+			System.out.println("Queue is not Empty");
+			DecipheredMessage decipheredMsg = new DecipheredMessage();
+			System.out.println("POOLING THE QUEUE OUT");
+			
+			String msg = null;
+			try {
+				msg = vigenereService.decrypt(cypherText,maxLength);
+				decipheredMsg.setDecipherMessage(msg);
+				if(decipheredMsg.getDecipherMessage()!=null){
+					System.out.println("Adding to map");
+					OutQueue.OutQueueInstance().outQueueMap().put(jobId, decipheredMsg);
+				}
+				else{
+					System.out.println("Not yet processed");
+				}
+			} catch (RemoteException e) {
+				
+			}
+			
+			
+}
 	}
 	
 }
