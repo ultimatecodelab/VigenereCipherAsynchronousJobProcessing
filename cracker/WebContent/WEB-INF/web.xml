@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  <display-name>Software Development Year 4 - Distributed Systems</display-name>
+  <description>
+     2015 Assignment - A Vigenere Cypher Breaker
+  </description>
+
+
+  <!-- A context is a variable with application wide scope-->
+  <context-param>
+    <param-name>RMI_SERVER</param-name>
+    <param-value>10.2.0.101</param-value>
+  </context-param>
+
+
+
+  <!-- A servlet class must be bound to a name -->
+  <servlet>
+    <servlet-name>cypher-request-handler</servlet-name>
+    <servlet-class>ie.gmit.sw.CrackerHandler</servlet-class>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
+  
+  <!-- A servlet name must be bound to a URL mapping, i.e. localhost:8080/doProcess executes the servlet ie.gmit.sw.CrackerHandler in WEB-INF/classes -->
+  <servlet-mapping>
+    <servlet-name>cypher-request-handler</servlet-name>
+    <url-pattern>/doProcess</url-pattern>
+  </servlet-mapping>
+</web-app>
