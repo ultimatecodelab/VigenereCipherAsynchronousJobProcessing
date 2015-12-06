@@ -5,7 +5,9 @@ public class InQueue {
 	private static LinkedList<Job> inQueue = new LinkedList<Job>();
 	private static InQueue inqueueInstance = new InQueue();
 	
+	//default constructor
 	private InQueue(){
+		
 	}
 	public static  InQueue inqueueInstance(){
 		return inqueueInstance;

@@ -2,7 +2,6 @@ package ie.gmit.sw;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 
 public class OutQueue {
 	private static Map<String, DecipheredMessage> outQueueMap  = new HashMap<String,DecipheredMessage>();

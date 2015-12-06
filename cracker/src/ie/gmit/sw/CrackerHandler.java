@@ -70,9 +70,10 @@ public class CrackerHandler extends HttpServlet {
 			 * 1: Creating the instance of new job object
 			 * 2: Put the job in InQueue instance
 			 */
+			CipheredMessage cipheredText  = new CipheredMessage(cypherText);
 			StringBuilder timeStamp = new StringBuilder(new SimpleDateFormat("mmss").format(Calendar.getInstance().getTime()).replace('_', 'x')).reverse();
 			taskNumber =  new String ("T"+((int) (Math.random()*100))+timeStamp.toString());
-			Job job = new Job(taskNumber, cypherText, maxKeyLength); //job
+			Job job = new Job(taskNumber, cipheredText.toString(), maxKeyLength); //job
 			InQueue.inqueueInstance().add(job);
 			key = "Processing......";
 			

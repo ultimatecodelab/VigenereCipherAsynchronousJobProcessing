@@ -33,22 +33,22 @@ public class AsyncJobProcessorRMIClient implements Runnable {
 	@SuppressWarnings("static-access")
 	private void checkQueue() {
 		if(!InQueue.inQueue().isEmpty()){
-			Job tempJob = InQueue.inQueue().poll(); //
+			Job tempJob = InQueue.inQueue().poll(); //job from the head of the queue
 			String jobId = tempJob.getJob_id();
 			
 			String cypherText = new String( tempJob.getCypherText());
 			Integer maxLength = new Integer(tempJob.getMaxKeyLength());
 			
 			System.out.println("Queue is not Empty");
-			DecipheredMessage decipheredMsg = new DecipheredMessage();
+			DecipheredMessage decipheredMsg;
 			System.out.println("POOLING THE QUEUE OUT");
 			
 			String msg = null;
 			try {
 				msg = vigenereService.decrypt(cypherText,maxLength);
-				decipheredMsg.setDecipherMessage(msg);
+				decipheredMsg = new DecipheredMessage(msg);
 				if(decipheredMsg.getDecipherMessage()!=null){
-					System.out.println("Adding to map");
+					System.out.println("Adding to Queue-map");
 					OutQueue.OutQueueInstance().outQueueMap().put(jobId, decipheredMsg);
 				}
 				else{
@@ -57,6 +57,6 @@ public class AsyncJobProcessorRMIClient implements Runnable {
 			} catch (RemoteException e) {
 				
 			}		
-		}
+		}//end of if
 	}	
 }
