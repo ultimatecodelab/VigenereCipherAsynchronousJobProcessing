@@ -22,6 +22,7 @@ public class CrackerHandler extends HttpServlet {
 		remoteHost = ctx.getInitParameter("RMI_SERVER"); //Reads the value from the <context-param> in web.xml
 	}
 	public String key = "Processing, Please wait.......";
+	String taskNumber;
 	@SuppressWarnings("static-access")
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		/*AsyncContext - Implementation
@@ -54,7 +55,7 @@ public class CrackerHandler extends HttpServlet {
 		int maxKeyLength = Integer.parseInt(req.getParameter("frmMaxKeyLength"));
 		
 		String cypherText = req.getParameter("frmCypherText");
-		String taskNumber = req.getParameter("frmStatus");
+		taskNumber = req.getParameter("frmStatus");
 		String doEncryption = req.getParameter("command");
 		System.out.println("Value is : " + doEncryption);
 		
@@ -67,23 +68,18 @@ public class CrackerHandler extends HttpServlet {
 			 * Job number is generated using the date + and random()
 			 * When we got a new request to crack the cipher text - we are doing the 
 			 * following operations
-			 * 1: Creating the instance of new job object
-			 * 2: Put the job in InQueue instance
+			 * 1:Creating the instance of new CipheredMessage Instance
+			 * 2:Creating a unique job_id / task Number
+			 * 3: Creating the instance of new job object
+			 * 4: Put the job in InQueue instance
 			 */
-			CipheredMessage cipheredText  = new CipheredMessage(cypherText);
-			StringBuilder timeStamp = new StringBuilder(new SimpleDateFormat("mmss").format(Calendar.getInstance().getTime()).replace('_', 'x')).reverse();
-			taskNumber =  new String ("T"+((int) (Math.random()*100))+timeStamp.toString());
-			Job job = new Job(taskNumber, cipheredText.toString(), maxKeyLength); //job
-			InQueue.inqueueInstance().add(job);
-			key = "Processing......";
+			
+			//processing new job
+			processNewRequest(maxKeyLength, cypherText);
 			
 		}else{
-			if(OutQueue.OutQueueInstance().outQueueMap().containsKey(taskNumber)){
-				 key = OutQueue.OutQueueInstance().outQueueMap().get(taskNumber).toString();
-			}
-			else {
-				key = "Processing......";
-			}
+			//Periodically checking if the job is done or not...
+			performPeriodicCheck(taskNumber);
 			
 		}
 		
@@ -140,6 +136,34 @@ public class CrackerHandler extends HttpServlet {
 		
 		//
 		
+	}
+
+	@SuppressWarnings("static-access")
+	private void performPeriodicCheck(String taskNumber) {
+		if(OutQueue.OutQueueInstance().outQueueMap().containsKey(taskNumber)){
+			 key = OutQueue.OutQueueInstance().outQueueMap().get(taskNumber).toString();
+		}
+		else {
+			key = "Processing......";
+		}
+	}
+
+	private void processNewRequest(int maxKeyLength, String cypherText) {
+		//adding the request to the queue
+		 taskNumber = new String(generateTaskNumber()); //generating taskNumber
+		CipheredMessage cipheredText  = new CipheredMessage(cypherText); //ciphered Text
+		
+		Job job = new Job(taskNumber, cipheredText.toString(), maxKeyLength); //job object
+		InQueue.inqueueInstance().add(job); //adding job to the queue
+		key = "Processing......"; //status to processing
+		
+	}
+
+	private String generateTaskNumber() {
+		String taskNumber;
+		StringBuilder timeStamp = new StringBuilder(new SimpleDateFormat("mmss").format(Calendar.getInstance().getTime()).replace('_', 'x')).reverse();
+		taskNumber =  new String ("T"+((int) (Math.random()*100))+timeStamp.toString());
+		return taskNumber;
 	}
 
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

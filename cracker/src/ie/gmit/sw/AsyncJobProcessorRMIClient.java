@@ -10,16 +10,17 @@ import ie.gmit.sw.rmi.VigenereBreaker;
 
 public class AsyncJobProcessorRMIClient implements Runnable {
 	
-	private boolean isCompleted = true;
+	//instance variable
+	private boolean forever = true;
 	private VigenereBreaker vigenereService = null;
 
-	//constructor that takes asyncContext - passed in from CrackerHandler
+	//constructor that takes asyncContext - passed in from CrackerHandler.java
 	public AsyncJobProcessorRMIClient(AsyncContext context) throws Exception{
 		 vigenereService = (VigenereBreaker) Naming.lookup("///cypher-service");
 	}
 	@Override
 	public void run() {
-		while(isCompleted){
+		while(forever){
 			try {
 				Thread.sleep(5000);
 				System.out.println("Sleeping");	

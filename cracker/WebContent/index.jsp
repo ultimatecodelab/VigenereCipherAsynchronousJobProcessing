@@ -10,7 +10,7 @@
 
 			<form bgcolor="white" method="POST" action="doProcess">
 				<fieldset>
-					<legend><h3>Vigenere Cipher Breaker</h3></legend>
+					<legend><h3>Vigenere Cipher Breaker - Arjun Kharel (G00298984)</h3></legend>
 					<p>
 					<b>Enter Length of the Key: <input name="frmMaxKeyLength" required="required" type="text" size="2" value="4">
 					<p/>
