@@ -6,9 +6,7 @@ import java.io.*;
 public class QuadgramMap {
 
 	private Map<String, Integer> map = new HashMap<String, Integer>();
-	
 
-	
 	public QuadgramMap(String filename) throws Exception {
 		parse(filename);
 	}

@@ -9,31 +9,28 @@ import javax.servlet.AsyncContext;
 import ie.gmit.sw.rmi.VigenereBreaker;
 
 public class AsyncJobProcessorRMIClient implements Runnable {
-
-	private AsyncContext asyncContext;
+	
 	private boolean isCompleted = true;
 	private VigenereBreaker vigenereService = null;
 
-	
-	public AsyncJobProcessorRMIClient() throws Exception{
-		//System.out.println("Constructor kicked in....");
+	//constructor that takes asyncContext - passed in from CrackerHandler
+	public AsyncJobProcessorRMIClient(AsyncContext context) throws Exception{
 		 vigenereService = (VigenereBreaker) Naming.lookup("///cypher-service");
 	}
 	@Override
 	public void run() {
 		while(isCompleted){
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(5000);
 				System.out.println("Sleeping");	
 				}//end of if
 				
 			 catch (InterruptedException e) {
 			 }	//catch
-			
 			checkQueue();
-			
 		}//while
 	}
+	@SuppressWarnings("static-access")
 	private void checkQueue() {
 		if(!InQueue.inQueue().isEmpty()){
 			Job tempJob = InQueue.inQueue().poll(); //
@@ -59,10 +56,7 @@ public class AsyncJobProcessorRMIClient implements Runnable {
 				}
 			} catch (RemoteException e) {
 				
-			}
-			
-			
-}
-	}
-	
+			}		
+		}
+	}	
 }

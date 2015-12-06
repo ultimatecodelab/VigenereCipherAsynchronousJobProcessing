@@ -1,38 +1,52 @@
 package ie.gmit.sw;
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
+
+@WebServlet(urlPatterns={"/AsyncJobProcessorRMIClient","/async"},asyncSupported=true)
 public class CrackerHandler extends HttpServlet {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private String remoteHost = null;
-	private static long jobNumber = 0;
 
 	public void init() throws ServletException {
 		ServletContext ctx = getServletContext();
 		remoteHost = ctx.getInitParameter("RMI_SERVER"); //Reads the value from the <context-param> in web.xml
-		//AsyncJobProcessorRMIClient jobProcessor = AsyncJobProcessorRMIClient();
+	}
+	public String key = "Processing, Please wait.......";
+	@SuppressWarnings("static-access")
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		/*AsyncContext - Implementation
+		 * Asynchronous" means that the API doesn't block the calling thread
+		 * Lets consider this situation where you have ONE job J1 with a LOT of 
+		 * cipher text to crack. This particular job will obviously gonna take 
+		 * more time . Lets imagine there is another client that want to use 
+		 * our Vigenere cracker service and his cipher text is not Long / big
+		 * as the first job j1 . WE(SECOND CLIENT)CANNOT WAIT UNTIL THE FIRST JOB J1 IS FINISHED
+		 * The use of AsyncContext make it possible for asynchronous request process
+		 * without blocking the other thread.... If your job is small it should finish
+		 * quick compare to the heavy job :)
+		 */
+		//-------- ASYNCHRONOUS REQUEST PROCESSING---------------------
+		req.setAttribute("org.apache.catalina.ASYNC_SUPPORTED", true);
+		final AsyncContext ac = req.startAsync(req,resp);
+		ac.setTimeout(10);
+		
+		final Executor watcherExecutor = Executors.newCachedThreadPool();
 		try {
-			AsyncJobProcessorRMIClient processor = new AsyncJobProcessorRMIClient();
-			Thread thread = new Thread(processor);
-			thread.start();
+			watcherExecutor.execute(new AsyncJobProcessorRMIClient(ac));
 		} catch (Exception e) {
 		}
 		
-	}
-	public String key = "Processing, Please wait.......";
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		//req.setAttribute("org.apache.catalina.ASYNC_SUPPORTED", true);
-		//final AsyncContext ac = req.startAsync(req,resp);
-		//ac.setTimeout(10*100);
-		
-		//final Executor watcherExecutor = Executors.newCachedThreadPool();
-		//watcherExecutor.execute(new AsyncJobProcessorRMIClient(ac));
+		//-------- ASYNCHRONOUS REQUEST PROCESSING---------------------
 		
 		resp.setContentType("text/html");
 		PrintWriter out = resp.getWriter();
@@ -43,39 +57,28 @@ public class CrackerHandler extends HttpServlet {
 		String taskNumber = req.getParameter("frmStatus");
 		String doEncryption = req.getParameter("command");
 		System.out.println("Value is : " + doEncryption);
-		//if value = 0 , take the key and do encryption
-		//else if value = 1, do the decryption
-
-
+		
 		out.print("<html><head><title>Distributed Systems Assignment</title>");		
 		out.print("</head>");		
 		out.print("<body>");
 		
-		
-		
 		if (taskNumber == null){
-			taskNumber = new String("T" + jobNumber);
-			
-			//Add job to in-queue
-			//Step 1
+			/*
+			 * Job number is generated using the date + and random()
+			 * When we got a new request to crack the cipher text - we are doing the 
+			 * following operations
+			 * 1: Creating the instance of new job object
+			 * 2: Put the job in InQueue instance
+			 */
+			StringBuilder timeStamp = new StringBuilder(new SimpleDateFormat("mmss").format(Calendar.getInstance().getTime()).replace('_', 'x')).reverse();
+			taskNumber =  new String ("T"+((int) (Math.random()*100))+timeStamp.toString());
 			Job job = new Job(taskNumber, cypherText, maxKeyLength); //job
-			//System.out.println("TaskNumber: " + taskNumber + " CypherText: " + cypherText + " Len: " +maxKeyLength);
-			
 			InQueue.inqueueInstance().add(job);
-			jobNumber++;
-			//System.out.println("Queue size is: " + InQueue.inqueueInstance().inQueue().size());
-			
-			//DecipheredMessage deciphered = DecipheredMessage();
 			key = "Processing......";
 			
 		}else{
-			//Check out-queue for finished job
-			//System.out.println("The task Number is: " + taskNumber);
-			
 			if(OutQueue.OutQueueInstance().outQueueMap().containsKey(taskNumber)){
 				 key = OutQueue.OutQueueInstance().outQueueMap().get(taskNumber).toString();
-				///System.out.println("Calling from handler: " + key);
-				
 			}
 			else {
 				key = "Processing......";
@@ -85,8 +88,6 @@ public class CrackerHandler extends HttpServlet {
 		
 		out.print("<H1>Processing request for Job#: " + taskNumber + "</H1>");
 		out.print("<div id=\"r\"></div>");
-		
-		
 		out.print("RMI Server is located at " + remoteHost);
 		out.print("<P>Maximum Key Length: " + maxKeyLength);		
 		out.print("<P>CypherText: " + cypherText);

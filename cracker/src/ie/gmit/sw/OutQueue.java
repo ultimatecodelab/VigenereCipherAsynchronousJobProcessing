@@ -5,14 +5,14 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 public class OutQueue {
-	private Map<String, DecipheredMessage> outQueue  = new HashMap<String,DecipheredMessage>();
+	private static Map<String, DecipheredMessage> outQueueMap  = new HashMap<String,DecipheredMessage>();
 	private static OutQueue outQueueInstance = new OutQueue();
 	
 	private OutQueue(){
 		
 	}
-	public Map<String,DecipheredMessage> outQueueMap(){
-		return outQueue;
+	public static Map<String,DecipheredMessage> outQueueMap(){
+		return outQueueMap;
 	}
 	public static  OutQueue OutQueueInstance(){
 		return outQueueInstance;
