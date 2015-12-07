@@ -57,20 +57,13 @@ public class QuadgramMap {
 			}
 			
 			if(sb.length() == 4){
-				
 				String qGram = sb.toString().toUpperCase();
 				str = qGram;
 				sb = new StringBuffer();
-				int frequency = 0;
-				frequency++;
-			////	System.out.println("Word: "+ qGram + " Freq: " + frequency);
-				//.put(qGram, 0);
 				map.put(qGram,0);
 					
 			}
-			if(next== '\n')
-			{
-				//System.out.println("Word: "+ str +" freq "+sb2.toString());
+			if(next== '\n'){
 				map.put(str, Integer.parseInt(sb2.toString().trim()));
 				sb2.setLength(0);
 			}

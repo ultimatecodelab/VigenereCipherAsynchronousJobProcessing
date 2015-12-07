@@ -22,8 +22,8 @@ public class AsyncJobProcessorRMIClient implements Runnable {
 	public void run() {
 		while(forever){
 			try {
-				Thread.sleep(5000);
-				System.out.println("Sleeping");	
+				Thread.sleep(10000);
+				//System.out.println("Sleeping");	
 				}//end of if
 				
 			 catch (InterruptedException e) {
@@ -37,12 +37,12 @@ public class AsyncJobProcessorRMIClient implements Runnable {
 			Job tempJob = InQueue.inQueue().poll(); //job from the head of the queue
 			String jobId = tempJob.getJob_id();
 			
-			String cypherText = new String( tempJob.getCypherText());
+			String cypherText = new String( tempJob.getCypherText().toString());
 			Integer maxLength = new Integer(tempJob.getMaxKeyLength());
 			
 			System.out.println("Queue is not Empty");
 			DecipheredMessage decipheredMsg;
-			System.out.println("POOLING THE QUEUE OUT");
+			System.out.println("POOLING THE JOB FROM THE QUEUE");
 			
 			String msg = null;
 			try {

@@ -3,12 +3,10 @@ package ie.gmit.sw;
 public class Job {
 	//instance variables
 	private String job_id;
-	private String cypherText;
-	private CipheredMessage cipheredMessage;
-	
+	private CipheredMessage cypherText;
 	private int maxKeyLength;
 	
-	public Job(String jobID, String cypherText,int keyLength){
+	public Job(String jobID, CipheredMessage cypherText,int keyLength){
 		setJob_id(jobID);
 		setCypherText(cypherText);
 		setMaxKeyLength(keyLength);
@@ -21,13 +19,11 @@ public class Job {
 	private void setMaxKeyLength(int maxKeyLength) {
 		this.maxKeyLength = maxKeyLength;
 	}
-
 	
-	
-	public String getCypherText() {
+	public CipheredMessage getCypherText() {
 		return cypherText;
 	}
-	private void setCypherText(String cypherText) {
+	private void setCypherText(CipheredMessage cypherText) {
 		this.cypherText = cypherText;
 	}
 	public String getJob_id() {

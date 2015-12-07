@@ -12,8 +12,6 @@ public class VigenereBreakerImpl extends UnicastRemoteObject implements Vigenere
 	
 	public VigenereBreakerImpl() throws Exception {
 		breaker = new KeyEnumerator();
-		//UnicastRemoteObject.exportObject(this);
-		
 	}
 	public String decrypt(String cypherText, int maxKeyLength) throws RemoteException {
 		System.out.println("Decrypting............");

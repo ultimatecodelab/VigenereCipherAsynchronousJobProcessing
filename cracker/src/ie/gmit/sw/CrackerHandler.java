@@ -1,7 +1,6 @@
 package ie.gmit.sw;
 
 import java.io.*;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.Executor;
@@ -21,7 +20,7 @@ public class CrackerHandler extends HttpServlet {
 		ServletContext ctx = getServletContext();
 		remoteHost = ctx.getInitParameter("RMI_SERVER"); //Reads the value from the <context-param> in web.xml
 	}
-	public String key = "Processing, Please wait.......";
+	public String plainTextMessage = "Processing...";
 	String taskNumber;
 	@SuppressWarnings("static-access")
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -57,7 +56,6 @@ public class CrackerHandler extends HttpServlet {
 		String cypherText = req.getParameter("frmCypherText");
 		taskNumber = req.getParameter("frmStatus");
 		String doEncryption = req.getParameter("command");
-		System.out.println("Value is : " + doEncryption);
 		
 		out.print("<html><head><title>Distributed Systems Assignment</title>");		
 		out.print("</head>");		
@@ -73,13 +71,22 @@ public class CrackerHandler extends HttpServlet {
 			 * 3: Creating the instance of new job object
 			 * 4: Put the job in InQueue instance
 			 */
-			
-			//processing new job
-			processNewRequest(maxKeyLength, cypherText);
+			//creating a new Request object - please see the Request class
+			//I have composed different classes to delegated the job.
+			Request request = new Request(maxKeyLength, cypherText);
+			taskNumber = new String(request.getRequestNumber());
+			plainTextMessage = "Processing...";
+			//processNewRequest(maxKeyLength, cypherText);
 			
 		}else{
-			//Periodically checking if the job is done or not...
-			performPeriodicCheck(taskNumber);
+			//creating the object of PeriodicQueueChecker to periodically check for a finished job
+			PeriodicQueueChecker periodicChecker = new PeriodicQueueChecker(taskNumber);
+			if(periodicChecker.getMessageStatus()){
+				plainTextMessage = OutQueue.OutQueueInstance().outQueueMap().get(taskNumber).toString();
+			}
+			else{
+				plainTextMessage = "Processing...";
+			}
 			
 		}
 		
@@ -89,7 +96,7 @@ public class CrackerHandler extends HttpServlet {
 		out.print("<P>Maximum Key Length: " + maxKeyLength);		
 		out.print("<P>CypherText: " + cypherText);
 		
-		out.print("<P><b>Deciphered Text: " + key );
+		out.print("<P><b>Deciphered Text: " + plainTextMessage );
 		/*out.print("<P>This servlet should only be responsible for handling client request and returning responses. Everything else should be handled by different objects.");
 		out.print("<P>Note that any variables declared inside this doGet() method are thread safe. Anything defined at a class level is shared between HTTP requests.");				
 
@@ -137,35 +144,6 @@ public class CrackerHandler extends HttpServlet {
 		//
 		
 	}
-
-	@SuppressWarnings("static-access")
-	private void performPeriodicCheck(String taskNumber) {
-		if(OutQueue.OutQueueInstance().outQueueMap().containsKey(taskNumber)){
-			 key = OutQueue.OutQueueInstance().outQueueMap().get(taskNumber).toString();
-		}
-		else {
-			key = "Processing......";
-		}
-	}
-
-	private void processNewRequest(int maxKeyLength, String cypherText) {
-		//adding the request to the queue
-		 taskNumber = new String(generateTaskNumber()); //generating taskNumber
-		CipheredMessage cipheredText  = new CipheredMessage(cypherText); //ciphered Text
-		
-		Job job = new Job(taskNumber, cipheredText.toString(), maxKeyLength); //job object
-		InQueue.inqueueInstance().add(job); //adding job to the queue
-		key = "Processing......"; //status to processing
-		
-	}
-
-	private String generateTaskNumber() {
-		String taskNumber;
-		StringBuilder timeStamp = new StringBuilder(new SimpleDateFormat("mmss").format(Calendar.getInstance().getTime()).replace('_', 'x')).reverse();
-		taskNumber =  new String ("T"+((int) (Math.random()*100))+timeStamp.toString());
-		return taskNumber;
-	}
-
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doGet(req, resp);
  	}
