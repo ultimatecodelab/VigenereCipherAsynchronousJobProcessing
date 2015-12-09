@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OutQueue {
+	//This class is responsible for holding the finished job
+	//Map with Job id and deciphered message
 	private static Map<String, DecipheredMessage> outQueueMap  = new HashMap<String,DecipheredMessage>();
 	private static OutQueue outQueueInstance = new OutQueue();
 	

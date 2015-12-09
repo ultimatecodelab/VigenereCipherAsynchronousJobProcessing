@@ -1,5 +1,7 @@
+/*
+ * This class is a Job class. This 
+ */
 package ie.gmit.sw;
-
 public class Job {
 	//instance variables
 	private String job_id;
@@ -7,15 +9,16 @@ public class Job {
 	private int maxKeyLength;
 	
 	public Job(String jobID, CipheredMessage cypherText,int keyLength){
+		//calling the setters
 		setJob_id(jobID);
 		setCypherText(cypherText);
 		setMaxKeyLength(keyLength);
 	}
-	
+	//getting max key length
 	public int getMaxKeyLength() {
 		return maxKeyLength;
 	}
-
+	//setting the key length
 	private void setMaxKeyLength(int maxKeyLength) {
 		this.maxKeyLength = maxKeyLength;
 	}

@@ -1,10 +1,9 @@
-package ie.gmit.sw.rmi;
+package ie.gmit.sw;
 
-import java.rmi.Naming;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 
+//implementation of a VigenereBreaker interface.
 public class VigenereBreakerImpl extends UnicastRemoteObject implements VigenereBreaker {
 
 	private static final long serialVersionUID = 1L;
@@ -18,16 +17,6 @@ public class VigenereBreakerImpl extends UnicastRemoteObject implements Vigenere
 		return breaker.crackCypher(cypherText, maxKeyLength);
 	}
 
-	public static void main(String[] args) throws Exception {
-		System.out.println("starting remote service");
-		
-		LocateRegistry.createRegistry(1099);
-		
-		Naming.bind("cypher-service", new VigenereBreakerImpl());
-		
-		System.out.println("service started...");
-		
-		
-	}
+	
 	
 }

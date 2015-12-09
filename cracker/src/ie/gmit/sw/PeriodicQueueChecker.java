@@ -1,25 +1,28 @@
 package ie.gmit.sw;
-
+/*
+ * This class is responsible for periodacally checking for the finished job
+ */
 public class PeriodicQueueChecker {
 	
-	private boolean messageStatus;
-	@SuppressWarnings({ "static-access", "unused" })
+	private boolean jobStatus; //job status
 	
 	public PeriodicQueueChecker(String taskNumber) {
-		messageStatus = performPeriodicCheck(taskNumber);
+		jobStatus = performPeriodicCheck(taskNumber);
 	}
+	//checks if the job with specific job number is finished or not and returns boolean
 	private boolean performPeriodicCheck(String taskNumber) {
 		if(OutQueue.OutQueueInstance().outQueueMap().containsKey(taskNumber)){
-			 messageStatus = true;
+			 jobStatus = true;
 		}
 		else {
-			messageStatus = false;
+			jobStatus = false;
 			
 		}
-		return messageStatus;
+		return jobStatus;
 	}
+	//returning job status
 	public boolean getMessageStatus(){
-		return messageStatus;
+		return jobStatus;
 	}
 	
 	

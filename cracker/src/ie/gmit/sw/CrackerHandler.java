@@ -1,27 +1,38 @@
 package ie.gmit.sw;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import javax.servlet.*;
+import javax.servlet.AsyncContext;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-
+/* This class is only responsible for handling the request.  All other tasks
+ * has been maintained by other appropriate classes
+ */
+//Async support to true.
 @WebServlet(urlPatterns={"/AsyncJobProcessorRMIClient","/async"},asyncSupported=true)
 public class CrackerHandler extends HttpServlet {
+	
+	//variables
 	private static final long serialVersionUID = 1L;
 	private String remoteHost = null;
+	private String plainTextMessage = "Processing...";
+	private String taskNumber;
+	private int line_break_at_character = 99;
 
 	public void init() throws ServletException {
 		ServletContext ctx = getServletContext();
 		remoteHost = ctx.getInitParameter("RMI_SERVER"); //Reads the value from the <context-param> in web.xml
 	}
-	public String plainTextMessage = "Processing...";
-	String taskNumber;
+	
+	
+	public StringBuilder sb = new StringBuilder();
 	@SuppressWarnings("static-access")
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		/*AsyncContext - Implementation
@@ -35,18 +46,20 @@ public class CrackerHandler extends HttpServlet {
 		 * without blocking the other thread.... If your job is small it should finish
 		 * quick compare to the heavy job :)
 		 */
-		//-------- ASYNCHRONOUS REQUEST PROCESSING---------------------
+		
+		//****************ASYNCHRONOUS REQUEST PROCESSING************************
 		req.setAttribute("org.apache.catalina.ASYNC_SUPPORTED", true);
 		final AsyncContext ac = req.startAsync(req,resp);
 		ac.setTimeout(10);
 		
+		//Executor service
 		final Executor watcherExecutor = Executors.newCachedThreadPool();
 		try {
 			watcherExecutor.execute(new AsyncJobProcessorRMIClient(ac));
 		} catch (Exception e) {
 		}
 		
-		//-------- ASYNCHRONOUS REQUEST PROCESSING---------------------
+		//****************ASYNCHRONOUS REQUEST PROCESSING************************
 		
 		resp.setContentType("text/html");
 		PrintWriter out = resp.getWriter();
@@ -55,34 +68,41 @@ public class CrackerHandler extends HttpServlet {
 		
 		String cypherText = req.getParameter("frmCypherText");
 		taskNumber = req.getParameter("frmStatus");
-		String doEncryption = req.getParameter("command");
 		
 		out.print("<html><head><title>Distributed Systems Assignment</title>");		
 		out.print("</head>");		
 		out.print("<body>");
 		
 		if (taskNumber == null){
-			/*
-			 * Job number is generated using the date + and random()
-			 * When we got a new request to crack the cipher text - we are doing the 
-			 * following operations
-			 * 1:Creating the instance of new CipheredMessage Instance
-			 * 2:Creating a unique job_id / task Number
-			 * 3: Creating the instance of new job object
-			 * 4: Put the job in InQueue instance
+			/* Step one : breaking <br> the line (cipher text)  if its too big (length > 99)
+			 * and LineBreaker class is responsible for checking the line (cipherText length.]
+			 * The only reason to break the line is, it looks better in a 
+			 * browser.
+			 * 
+			 * Step 2 : Creating the new Request object - Please check the Request class.
+				Request class is composed of different classes and has delegated the job to different
+				objects.
 			 */
-			//creating a new Request object - please see the Request class
-			//I have composed different classes to delegated the job.
-			Request request = new Request(maxKeyLength, cypherText);
-			taskNumber = new String(request.getRequestNumber());
-			plainTextMessage = "Processing...";
-			//processNewRequest(maxKeyLength, cypherText);
 			
+			cypherText = new LineBreaker(cypherText,line_break_at_character).toString();
+			
+			//constructing the RequestFacade object - all the complexity of
+			//constructing a new Request is hidden here and is managed by the RequestFacade Class itself. 
+			RequestFacade requestFacade = new RequestFacade(maxKeyLength, cypherText);
+			requestFacade.processNewRequest();
+			
+			//copying the task number from RequestFacade class.
+			taskNumber = new String(requestFacade.getRequestNumber());
+			plainTextMessage = "Processing...";
+
 		}else{
 			//creating the object of PeriodicQueueChecker to periodically check for a finished job
 			PeriodicQueueChecker periodicChecker = new PeriodicQueueChecker(taskNumber);
+			
 			if(periodicChecker.getMessageStatus()){
+				
 				plainTextMessage = OutQueue.OutQueueInstance().outQueueMap().get(taskNumber).toString();
+				plainTextMessage = new LineBreaker(plainTextMessage,line_break_at_character).toString();
 			}
 			else{
 				plainTextMessage = "Processing...";
@@ -90,10 +110,12 @@ public class CrackerHandler extends HttpServlet {
 			
 		}
 		
+		
 		out.print("<H1>Processing request for Job#: " + taskNumber + "</H1>");
 		out.print("<div id=\"r\"></div>");
 		out.print("RMI Server is located at " + remoteHost);
-		out.print("<P>Maximum Key Length: " + maxKeyLength);		
+		out.print("<P>Maximum Key Length: " + maxKeyLength);
+		
 		out.print("<P>CypherText: " + cypherText);
 		
 		out.print("<P><b>Deciphered Text: " + plainTextMessage );

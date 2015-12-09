@@ -1,5 +1,5 @@
 package ie.gmit.sw;
-
+//decrypted message object
 public class DecipheredMessage {
 	private String decipherMessage;
 

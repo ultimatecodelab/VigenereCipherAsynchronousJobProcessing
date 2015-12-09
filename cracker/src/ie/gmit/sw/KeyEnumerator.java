@@ -1,4 +1,4 @@
-package ie.gmit.sw.rmi;
+package ie.gmit.sw;
 
 public class KeyEnumerator {
 	
@@ -8,6 +8,14 @@ public class KeyEnumerator {
 	private String bestKey;
 	
 	public KeyEnumerator() throws Exception {
+		/*The file name must be the Quadgrams.txt that contains the word and freq
+		 * The file containing the quadram (Quadgrams.txt) is supplied with project.
+		 * TION 13168375
+		   NTHE 11234972
+		   THER 10218035
+		   THAT 8980536
+		   ......
+		 */
 		map = new QuadgramMap("Quadgrams.txt");
 	}
 	
@@ -23,6 +31,7 @@ public class KeyEnumerator {
 		}
 		return key;
 	}
+	//cracking the cipher with every possible keys.
 	public String crackCypher(String cypherText, int maxKeyLength){
 		char[] key = null;
 		float score = 0.00f;
@@ -43,25 +52,7 @@ public class KeyEnumerator {
 				}
 			}while ((key = getNextKey(key)) != null);
 		}
-		System.out.println("Enumerated " + counter + " keys.");
 		String yahoo = new Vigenere(bestKey).doCypher(cypherText, false);
-		System.out.println("Best key is : " + bestKey);
-		System.out.println("Best score is : " + bestScore);
-		System.out.println("The decrypted text is : \n " + yahoo);
 		return yahoo;
-	}
-	
-	public static void main(String[] args) throws Exception {
-		String cypherText = "UGSZUZFQDHUQIIUFTOLQOTFQXQHUEUAZYDMEEMPEMUPMKQMDARIQEFQDZMUDEFDUWQETMPRMUXQPFAEFABFTQMPHMZOQAREAOMXXQPUEXMYUOEFMFQYUXUFMZFENGFEUZOQFTQDGEEUMZUZFQDHQZFUAZEAOMXXQPUEXMYUOEFMFQMZPAFTQDVUTMPUSDAGBETMPNQSGZFAETDUZWYDMEEMPEMUPFTQPAIZUZSARMDGEEUMZIMDBXMZQNKFGDWQKXMEFIQQWETAIQPMZWMDMEPUEEMFUERMOFUAZIUFTPQHQXABYQZFEAZFTQSDAGZPUZEKDUMITUOTTQEMUPTMPNQQZYAHUZSUZFTQSAHQDZYQZFERMHAGD";
-		new KeyEnumerator().crackCypher(cypherText,4 );
-	}
-	public String addSpace(String txt){
-		StringBuilder sb = new StringBuilder();
-		for(int  i = 0 ; i <txt.length() ; i++){
-			if(i%4==0){
-				sb.append(txt+" ");
-			}
-		}
-		return sb.toString();
 	}
 }

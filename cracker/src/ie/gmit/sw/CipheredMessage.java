@@ -11,7 +11,7 @@ public class CipheredMessage {
 	public CipheredMessage(String cipheredText){
 		setCipheredMessage(cipheredText);
 	}
-	
+	//getting cipher message
 	public String getCipheredMessage() {
 		return cipheredMessage;
 	}

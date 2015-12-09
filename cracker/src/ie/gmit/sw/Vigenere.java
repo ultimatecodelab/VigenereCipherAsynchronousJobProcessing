@@ -1,4 +1,4 @@
-package ie.gmit.sw.rmi;
+package ie.gmit.sw;
 
 
 public class Vigenere { //Blaise de Vigenere is (incorrectly) accredited with inventing this encryption mechanism
@@ -127,8 +127,14 @@ public class Vigenere { //Blaise de Vigenere is (incorrectly) accredited with in
 	}
 	
 	public static void main(String[] args) {
-		Vigenere v = new Vigenere("MTWS");
-		String cypherTxt = v.doCypher("in an interview with Czech Television, Mr Assad said a year of western airstrikes had failed to stop the advance of so-called Islamic State militants but since the Russian intervention so-called Islamic State and other jihadi groups had begun to shrink.Mr Assad said the downing of a Russian warplane by Turkey last week showed Ankara's dissatisfaction with developments on the ground in Syria, which he said had been moving in the government's favour.".trim().toUpperCase(),true);
+		Vigenere v = new Vigenere("JAVA");
+		
+		String cypherTxt = v.doCypher("Heavens! what a virulent attack! replied the prince, not in the least disconcerted by this reception. "
+				+ "He had just entered, wearing an embroidered court uniform, knee breeches, and shoes, and had stars on his breast and a serene "
+				+ "expression on his flat face. He spoke in that refined French in which our grandfathers not only spoke but thought, and with the gentle, "
+				+ "patronizing intonation natural to a man of importance who had grown old in society and at court. He went up to Anna Pavlovna, kissed her"
+				+ " hand, presenting to her his bald, scented, and shining head,and complacently seated himself on the sofa.".trim().toUpperCase(),true);
+		
 		System.out.println(cypherTxt);
 		String plainTxt = v.doCypher(cypherTxt, false);
 		System.out.println(plainTxt);
