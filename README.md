@@ -10,11 +10,15 @@ INSTRUCTIONS
 
 **Starting the RMI service**
 1: Open command prompt and cd into G00298984 folder.
+
 2: Please make sure the **"Quadgrams.txt" and "vigenere.jar" are on the same folder**.
+
 3:Start the RMI service by the command provided below (windows)
 
 	**java -cp "./vigenere.jar;lib/*" ie.gmit.sw.Servant** 
+	
 4: Copy the cracker.war to webapps folder and start the apache server
+
 5: open your browser and go to http://localhost:8080/cracker/
 
 ##Features: 
