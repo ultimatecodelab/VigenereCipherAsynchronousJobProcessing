@@ -5,18 +5,17 @@ package ie.gmit.sw;
  */
 public class LineBreaker {
 	//private variables
-	private  StringBuilder lineWithBreakline;
+	private  StringBuilder lineWithBreakline = new StringBuilder();;
 
 	public LineBreaker(String str,int breaking_Point){
 		breakString(str, breaking_Point);
 	}
 	//breaking the string
-	private String breakString(String str, int breakingPoint ){
+	private void breakString(String str, int breakingPoint ){
 		//if the str length within the range of BREAKING_POINT, return
 		if(str.length()<breakingPoint){
-			return str;
+			lineWithBreakline.append(str);
 		}
-		lineWithBreakline = new StringBuilder();
 		for(int i  = 0 ; i <str.length(); i++){
 			if(i%breakingPoint==0 && i!=0){
 				lineWithBreakline.append("<br />"); //adding line break
@@ -25,10 +24,10 @@ public class LineBreaker {
 				lineWithBreakline.append(str.charAt(i));
 			}
 		}//end of for
-		return lineWithBreakline.toString();
+		
 	}
 	//over-riding the toString method()
-	public String toString(){
+	public String getStringWithLineBreaks(){
 		return lineWithBreakline.toString();
 	}
 }

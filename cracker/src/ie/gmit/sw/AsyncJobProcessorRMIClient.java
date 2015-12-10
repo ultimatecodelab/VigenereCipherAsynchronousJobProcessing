@@ -1,15 +1,20 @@
 package ie.gmit.sw;
 import java.rmi.Naming;
+import java.util.concurrent.TimeUnit;
 import java.rmi.RemoteException;
-
 import javax.servlet.AsyncContext;
 
+ //RMI Remote interface has been added to the project references as a jar file(remote Interface)
+
+//implements Runnable
 public class AsyncJobProcessorRMIClient implements Runnable {
 	
 	//instance variable
 	private boolean forever = true;
-	private VigenereBreaker vigenereService = null;
-
+	
+	//please note : The  remote INTERFACE  and has been added in a Referenced Library (vigenereRemote.jar)
+	private VigenereBreaker vigenereService = null; 
+	
 	//constructor that takes asyncContext - passed in from CrackerHandler.java
 	public AsyncJobProcessorRMIClient(AsyncContext context) throws Exception{
 		 vigenereService = (VigenereBreaker) Naming.lookup("///cypher-service");
@@ -18,13 +23,12 @@ public class AsyncJobProcessorRMIClient implements Runnable {
 	public void run() {
 		while(forever){
 			try {
-				Thread.sleep(2000); //Stabilizes/balances the request coming in.
-				//System.out.println("Sleeping");	
+				TimeUnit.MILLISECONDS.sleep(2000); //sleep time
 				}//end of if
 				
 			 catch (InterruptedException e) {
 			 }	//catch
-			checkQueue();
+			checkQueue(); //checking queue to see if there are any jobs to be processed
 		}//while
 	}
 	@SuppressWarnings("static-access")
@@ -60,5 +64,6 @@ public class AsyncJobProcessorRMIClient implements Runnable {
 				
 			}		
 		}//end of if
-	}	
+	}
+	
 }

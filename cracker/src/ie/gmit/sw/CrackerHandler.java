@@ -3,6 +3,7 @@ package ie.gmit.sw;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletContext;
@@ -42,7 +43,7 @@ public class CrackerHandler extends HttpServlet {
 		 * more time . Lets imagine there is another client that want to use 
 		 * our Vigenere cracker service and his cipher text is not Long / big
 		 * as the first job j1 . WE(SECOND CLIENT)CANNOT WAIT UNTIL THE FIRST JOB J1 IS FINISHED
-		 * The use of AsyncContext make it possible for asynchronous request process
+		 * The use of AsyncContext , Executors / ExecutorsService make it possible for asynchronous request process
 		 * without blocking the other thread.... If your job is small it should finish
 		 * quick compare to the heavy job :)
 		 */
@@ -52,11 +53,23 @@ public class CrackerHandler extends HttpServlet {
 		final AsyncContext ac = req.startAsync(req,resp);
 		ac.setTimeout(10);
 		
-		//Executor service
+		
+		/*Creates a thread pool that creates new threads as needed, but will 
+		 * reuse previously constructed threads when they are available. 
+		 * These pools will typically improve the performance of programs 
+		 * that execute many short-lived asynchronous tasks. Calls to execute 
+		 * will reuse previously constructed threads if available. If no 
+		 * existing thread is available, a new thread will be created and 
+		 * added to the pool. 
+		 * 
+		 *///Executor service and newCachedThreadPool (Executors service)
+		
 		final Executor watcherExecutor = Executors.newCachedThreadPool();
 		try {
+			// Submitting a task - (AsyncJobProcessorRMIClient) Class implements runnable
 			watcherExecutor.execute(new AsyncJobProcessorRMIClient(ac));
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 		
 		//****************ASYNCHRONOUS REQUEST PROCESSING************************
@@ -79,12 +92,13 @@ public class CrackerHandler extends HttpServlet {
 			 * The only reason to break the line is, it looks better in a 
 			 * browser.
 			 * 
-			 * Step 2 : Creating the new Request object - Please check the Request class.
-				Request class is composed of different classes and has delegated the job to different
+			 * Step 2 : Creating the new RequestFacade object - Please check the RequestFacade class.
+				RequestFacade class is composed of different classes and has delegated the tasks to different
 				objects.
 			 */
 			
-			cypherText = new LineBreaker(cypherText,line_break_at_character).toString();
+			LineBreaker lineBreaker = new LineBreaker(cypherText,line_break_at_character);
+			cypherText = lineBreaker.getStringWithLineBreaks();
 			
 			//constructing the RequestFacade object - all the complexity of
 			//constructing a new Request is hidden here and is managed by the RequestFacade Class itself. 
@@ -100,9 +114,11 @@ public class CrackerHandler extends HttpServlet {
 			PeriodicQueueChecker periodicChecker = new PeriodicQueueChecker(taskNumber);
 			
 			if(periodicChecker.getMessageStatus()){
-				
 				plainTextMessage = OutQueue.OutQueueInstance().outQueueMap().get(taskNumber).toString();
-				plainTextMessage = new LineBreaker(plainTextMessage,line_break_at_character).toString();
+				//if the decrypted text is too big > 100 chars then we are inserting the <br>
+				LineBreaker decryptedLineBreaker = new LineBreaker(plainTextMessage,line_break_at_character);
+				plainTextMessage = decryptedLineBreaker.getStringWithLineBreaks();
+				
 			}
 			else{
 				plainTextMessage = "Processing...";
