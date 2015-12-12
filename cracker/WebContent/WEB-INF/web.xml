@@ -14,7 +14,7 @@
   <!-- A context is a variable with application wide scope-->
   <context-param>
     <param-name>RMI_SERVER</param-name>
-    <param-value>localhost</param-value>
+    <param-value>127.0.0.1</param-value>
   </context-param>
 
 

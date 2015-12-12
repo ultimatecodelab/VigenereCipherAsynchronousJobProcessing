@@ -15,6 +15,7 @@ public class DecipheredMessage {
 		this.decipherMessage = decipherMessage;
 	}
 	
+	@Override
 	public String toString(){
 		return getDecipherMessage().toString();
 	}

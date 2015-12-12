@@ -11,7 +11,8 @@ public class PeriodicQueueChecker {
 	}
 	//checks if the job with specific job number is finished or not and returns boolean
 	private boolean performPeriodicCheck(String taskNumber) {
-		if(OutQueue.OutQueueInstance().outQueueMap().containsKey(taskNumber)){
+		OutQueue.OutQueueInstance();
+		if(OutQueue.outQueueMap().containsKey(taskNumber)){
 			 jobStatus = true;
 		}
 		else {

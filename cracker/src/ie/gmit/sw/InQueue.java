@@ -2,10 +2,11 @@
  */
 
 package ie.gmit.sw;
-import java.util.LinkedList;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 public class InQueue {
 	//queue holding the Job object
-	private static LinkedList<Job> inQueue = new LinkedList<Job>();
+	private static BlockingQueue<Job> inQueue = new LinkedBlockingQueue<Job>();
 	//returning one instance of Inqueue
 	private static InQueue inqueueInstance = new InQueue();
 	
@@ -16,7 +17,7 @@ public class InQueue {
 	public static  InQueue inqueueInstance(){
 		return inqueueInstance;
 	}
-	public static LinkedList<Job> inQueue (){
+	public static BlockingQueue<Job> inQueue (){
 		return inQueue;
 	}
 	//adding the job in the queue

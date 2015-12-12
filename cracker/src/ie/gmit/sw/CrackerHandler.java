@@ -1,8 +1,13 @@
+/*
+ * NOTE : WHEN YOU IMPORT THE THIS PROJECT IN YOUR ECLIPSE WORKSPACE AND IF
+ * IT IS NOT ABLE TO RECOGNISE THE HTTPServlet, the you have to set the target runtime, and to do so
+ *  please follow this step:
+ * Right click on cracker project and go to properties. Click the targer runtime
+ * and set it to apacheTomcat8.0 :) 
+ */
 package ie.gmit.sw;
-
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.servlet.AsyncContext;
@@ -25,16 +30,16 @@ public class CrackerHandler extends HttpServlet {
 	private String remoteHost = null;
 	private String plainTextMessage = "Processing...";
 	private String taskNumber;
-	private int line_break_at_character = 99;
-
+	
+	@Override
 	public void init() throws ServletException {
 		ServletContext ctx = getServletContext();
 		remoteHost = ctx.getInitParameter("RMI_SERVER"); //Reads the value from the <context-param> in web.xml
 	}
 	
+	//public StringBuilder sb = new StringBuilder();
+	@Override
 	
-	public StringBuilder sb = new StringBuilder();
-	@SuppressWarnings("static-access")
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		/*AsyncContext - Implementation
 		 * Asynchronous" means that the API doesn't block the calling thread
@@ -62,12 +67,12 @@ public class CrackerHandler extends HttpServlet {
 		 * existing thread is available, a new thread will be created and 
 		 * added to the pool. 
 		 * 
-		 *///Executor service and newCachedThreadPool (Executors service)
+		 *///Executor service and newCachedThreadPool
 		
-		final Executor watcherExecutor = Executors.newCachedThreadPool();
+		final ExecutorService watcherExecutor = Executors.newCachedThreadPool();
 		try {
 			// Submitting a task - (AsyncJobProcessorRMIClient) Class implements runnable
-			watcherExecutor.execute(new AsyncJobProcessorRMIClient(ac));
+			watcherExecutor.execute(new AsyncTaskProcessor(ac));
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -80,50 +85,40 @@ public class CrackerHandler extends HttpServlet {
 		int maxKeyLength = Integer.parseInt(req.getParameter("frmMaxKeyLength"));
 		
 		String cypherText = req.getParameter("frmCypherText");
+		cypherText	 = cypherText.replace('\n', ' ');
+		cypherText.trim();
 		taskNumber = req.getParameter("frmStatus");
 		
 		out.print("<html><head><title>Distributed Systems Assignment</title>");		
 		out.print("</head>");		
 		out.print("<body>");
 		
+		
 		if (taskNumber == null){
-			/* Step one : breaking <br> the line (cipher text)  if its too big (length > 99)
-			 * and LineBreaker class is responsible for checking the line (cipherText length.]
-			 * The only reason to break the line is, it looks better in a 
-			 * browser.
-			 * 
-			 * Step 2 : Creating the new RequestFacade object - Please check the RequestFacade class.
+			/*
+		 		Creating the new VigenereRequestManagerFacade object - Please check the VigenereRequestManagerFacade class.
 				RequestFacade class is composed of different classes and has delegated the tasks to different
-				objects.
+				objects.The complexity of constructing a new Request is hidden here and is managed by the VigenereRequestManagerFacade Class itself. 
 			 */
-			
-			LineBreaker lineBreaker = new LineBreaker(cypherText,line_break_at_character);
-			cypherText = lineBreaker.getStringWithLineBreaks();
-			
-			//constructing the RequestFacade object - all the complexity of
-			//constructing a new Request is hidden here and is managed by the RequestFacade Class itself. 
-			RequestFacade requestFacade = new RequestFacade(maxKeyLength, cypherText);
-			requestFacade.processNewRequest();
-			
-			//copying the task number from RequestFacade class.
-			taskNumber = new String(requestFacade.getRequestNumber());
-			plainTextMessage = "Processing...";
 
-		}else{
-			//creating the object of PeriodicQueueChecker to periodically check for a finished job
-			PeriodicQueueChecker periodicChecker = new PeriodicQueueChecker(taskNumber);
+			VigenereRequestManagerFacade requestFacade = new VigenereRequestManagerFacade(maxKeyLength, cypherText);
 			
-			if(periodicChecker.getMessageStatus()){
-				plainTextMessage = OutQueue.OutQueueInstance().outQueueMap().get(taskNumber).toString();
-				//if the decrypted text is too big > 100 chars then we are inserting the <br>
-				LineBreaker decryptedLineBreaker = new LineBreaker(plainTextMessage,line_break_at_character);
-				plainTextMessage = decryptedLineBreaker.getStringWithLineBreaks();
-				
-			}
-			else{
-				plainTextMessage = "Processing...";
-			}
+			//copying the task number from VigenereRequestManagerFacade class.
+			taskNumber = new String(requestFacade.getRequestNumber());
+			plainTextMessage = new String("Processing....");
+
+		}else {
+			//If the job was already submitted, we are simply creating the VigenereRequestManagerFacade object
+			//and passing the task number in a constructor to check for its status.
 			
+			 VigenereRequestManagerFacade requestFacade = new VigenereRequestManagerFacade(taskNumber);
+			
+			//checking if the job has finished processing
+			if(requestFacade.checkStatus(taskNumber)){
+				plainTextMessage =new String( requestFacade.getJob(taskNumber));
+			}else{
+				 plainTextMessage = new String("Processing....");
+			}
 		}
 		
 		
@@ -177,11 +172,8 @@ public class CrackerHandler extends HttpServlet {
 		 * 7) Return the cyphertext to the client next time a request for the jobNumber is received and delete the key / value pair from the Map.
 		 */
 		
-		//You can use this method to implement the functionality of an RMI client
-		
-		//
-		
 	}
+	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doGet(req, resp);
  	}

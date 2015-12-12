@@ -19,6 +19,7 @@ public class CipheredMessage {
 	private  void setCipheredMessage(String cipheredMessage) {
 		this.cipheredMessage = cipheredMessage;
 	}
+	@Override
 	public String toString(){
 		return getCipheredMessage();
 	}

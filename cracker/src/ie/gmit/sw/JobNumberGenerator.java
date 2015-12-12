@@ -8,10 +8,11 @@ public class JobNumberGenerator {
 	private String generateTaskNumber() {
 		String taskNumber;
 		StringBuilder timeStamp = new StringBuilder(new SimpleDateFormat("mmss").format(Calendar.getInstance().getTime()).replace('_', 'x')).reverse();
-		taskNumber =  new String ("T"+((int) (Math.random()*100))+timeStamp.toString());
+		taskNumber =  new String ("T"+((int) (Math.random()*100))+timeStamp.toString() + (int) (Math.random()*100));
 		return taskNumber;
 	}
 	//returning job number
+	@Override
 	public String toString(){
 		return generateTaskNumber();
 	}

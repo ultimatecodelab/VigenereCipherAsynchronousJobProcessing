@@ -1,11 +1,13 @@
 package ie.gmit.sw;
 import java.util.*;
 import java.io.*;
-
+/*
+ * This class is responsible for holding the quadgrams in a map.
+ */
 public class QuadgramMap {
-
+	
 	private Map<String, Integer> map = new HashMap<String, Integer>();
-	private static final int DIVIDING_FACTOR = 1000;
+	private  final int DIVIDING_FACTOR = 1000;
 	private static final int QUAD_LENGTH = 4;
 
 	public QuadgramMap(String filename) throws Exception {
@@ -62,7 +64,7 @@ public class QuadgramMap {
 			}
 		}
 		br.close();
-		System.out.println("Size of Map: " +map.size());
+		
 		//Testing finished..
 	}
 }
