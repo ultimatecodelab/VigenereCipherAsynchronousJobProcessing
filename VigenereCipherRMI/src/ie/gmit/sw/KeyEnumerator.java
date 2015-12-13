@@ -17,7 +17,12 @@ public class KeyEnumerator {
 		 */
 		
 		//System.out.println(filePath.toString());
+		try{
 		map = new QuadgramMap("./Quadgrams.txt");
+		}
+		catch (Exception e){
+			System.out.println("Quadgrams.txt not found :( , vigener.jar and Quadgrams.txt should be on the same location.");
+		}
 	}
 	
 	private char[] getNextKey(char[] key){

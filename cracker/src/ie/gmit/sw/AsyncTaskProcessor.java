@@ -21,7 +21,7 @@ public class AsyncTaskProcessor implements Runnable {
 	public void run() {
 		while(forever){
 			try {
-				TimeUnit.MILLISECONDS.sleep(2000); //sleep time
+				TimeUnit.MILLISECONDS.sleep(1000); //sleep time
 				checkQueue(); //checking queue to see if there are any jobs to be processed
 				}//end of if
 				

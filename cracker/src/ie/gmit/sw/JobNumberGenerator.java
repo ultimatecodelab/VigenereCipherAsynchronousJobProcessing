@@ -1,7 +1,7 @@
 package ie.gmit.sw;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-/*This calss is responsible  generating the job number
+/*This class is responsible  generating the job number
  */
 public class JobNumberGenerator {
 	//generating job number

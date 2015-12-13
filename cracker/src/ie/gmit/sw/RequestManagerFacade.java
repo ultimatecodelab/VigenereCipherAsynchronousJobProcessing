@@ -1,7 +1,7 @@
 package ie.gmit.sw;
 
 //This class is responsible for handling the request. 
-//All the complexity of creating a new request is managed from this FacadeClass
+//All the complexity of creating a new request is managed from this RequestManagerFacade class
 public class RequestManagerFacade {
 	
 	private String requestNumber;
