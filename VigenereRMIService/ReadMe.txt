@@ -17,6 +17,8 @@ Starting the RMI service
 1: Open command prompt and cd into G00298984 folder.
 2: Please make sure the "Quadgrams.txt" and "vigenere.jar" are on the same folder.
 3:Start the RMI service by the command provided below (windows)
+	
+	Running on linux java -cp "./vigenere.jar:lib/*" ie.gmit.sw.Servant
 
 	java –cp ./vigenere.jar ie.gmit.sw.Servant
 
