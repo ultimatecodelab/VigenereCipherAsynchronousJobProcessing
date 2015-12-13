@@ -1,6 +1,7 @@
 ##Developer : Arjun Kharel (G00298984) - Async Vigenere Cipher Breaker
 
-**Source Code : https://github.com/ultimatecodelab/VigenereCipherAsynchronousJobProcessing (VigenereCipherRMI AND cracker )folder.**
+**Source Code : clone **https://github.com/ultimatecodelab/VigenereCipherAsynchronousJobProcessing.git**
+**https://github.com/ultimatecodelab/VigenereCipherAsynchronousJobProcessing (VigenereCipherRMI AND cracker )folder.**
 
 G00298984 (Zip archive contains the following)
 - README.txt
@@ -34,7 +35,7 @@ The project is fully functional and is composed of the following features / Tech
 
 3: Messages Queues / Maps fully implemented.
 
-3: OOp techniques applied. 
+3: OOP techniques applied. 
 
 4: Decipher the ciphered text with very high accuracy.
 
