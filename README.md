@@ -1,8 +1,8 @@
 ﻿##Developer : Arjun Kharel (G00298984) - Async Vigenere Cipher Breaker
 
-**Source Code - clone:** https://github.com/ultimatecodelab/VigenereCipherAsynchronousJobProcessing.git
+**Clone:** https://github.com/ultimatecodelab/VigenereCipherAsynchronousJobProcessing.git
 
-**https://github.com/ultimatecodelab/VigenereCipherAsynchronousJobProcessing (VigenereCipherRMI AND cracker )folder.**
+**Source Code -  https://github.com/ultimatecodelab/VigenereCipherAsynchronousJobProcessing (VigenereRMIService AND cracker )folder.**
 
 G00298984 (Zip archive contains the following)
 - cracker.war
