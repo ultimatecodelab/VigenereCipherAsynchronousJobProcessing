@@ -1,4 +1,5 @@
 ﻿##Developer : Arjun Kharel (G00298984) - Async Vigenere Cipher Breaker
+﻿![Alt text](https://github.com/ultimatecodelab/VigenereCipherAsynchronousJobProcessing/blob/master/img.PNG "Optional title")
 
 **Clone:https://github.com/ultimatecodelab/VigenereCipherAsynchronousJobProcessing.git**
 
